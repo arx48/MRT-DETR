@@ -1,0 +1,12 @@
+__include__: [
+  '../dataset/fusion_detection.yml',
+  '../runtime.yml',
+  './include/dataloader.yml',
+  './include/optimizer.yml',
+  './include/rtdetr_r50vd.yml',
+]
+
+output_dir: ./output/1106_0
+
+checkpoint_step: 200
+epoches: 160

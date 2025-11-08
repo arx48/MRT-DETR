@@ -1,0 +1,117 @@
+task: detection
+
+model: RTDETR
+criterion: SetCriterion
+postprocessor: RTDETRPostProcessor
+
+
+RTDETR: 
+  backbone: PResNet
+  backbone_ir: PResNet
+  cross_attention: CrossSpectrumAttention
+  brightness_extractor: BrightnessExtractor
+#  edge_extractor: EdgeDetector
+  encoder: HybridEncoder
+  decoder: RTDETRTransformer
+  multi_scale: [480, 512, 544, 576, 608, 640, 640, 640, 672, 704, 736, 768, 800]
+
+# CrossSpectrumAttentionHybridS5:
+#   in_channels: 256
+#   num_stages: 2
+#   num_heads: 8
+#   s5_max_hw: 32
+
+CrossSpectrumAttention:
+  in_channels: 256
+  num_stages: 2
+
+BrightnessExtractor:
+  downsample_size: [76, 76]
+  
+# BrightnessExtractorSoftmax:
+#   downsample_size: [32, 32]
+
+PResNet:
+  depth: 50     # 深度：ResNet50（改成101即为L）
+  variant: d
+  freeze_at: 0
+  return_idx: [1, 2, 3]     # ResNet有conv2/3/4/5四个stage，这里返回的是conv3/conv4/conv5三层
+  num_stages: 4             # 总共使用多少个stage
+  freeze_norm: True
+  pretrained: True
+
+ConvNeXtV2:
+  in_chans: 3
+  return_idx: [1, 2, 3]
+  num_classes: 80
+  variant: 'convnextv2_base'
+  drop_path_rate: 0.
+  head_init_scale: 1.
+  pretrained: True
+
+ConvNetBranch:
+  in_channels: 3
+  growth_rate: 32
+  num_layers: 4
+  return_idx: [1, 2, 3]
+
+HybridEncoder:
+  in_channels: [512, 1024, 2048]
+  feat_strides: [8, 16, 32]
+
+  # intra
+  hidden_dim: 256
+  use_encoder_idx: [2]
+  num_encoder_layers: 1
+  nhead: 8
+  dim_feedforward: 1024
+  dropout: 0.
+  enc_act: 'gelu'
+  pe_temperature: 10000
+  
+  # cross
+  expansion: 1.0
+  depth_mult: 1
+  act: 'silu'
+
+  # eval
+  eval_spatial_size: [640, 640]
+
+
+RTDETRTransformer:
+  feat_channels: [256, 256, 256]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  num_levels: 3
+
+  num_queries: 300
+
+  num_decoder_layers: 6
+  num_denoising: 100
+  
+  eval_idx: -1
+  eval_spatial_size: [640, 640]
+
+
+use_focal_loss: True
+
+RTDETRPostProcessor:
+  num_top_queries: 300
+
+
+SetCriterion:
+  weight_dict: {loss_vfl: 1, loss_bbox: 5, loss_giou: 2,
+                loss_deform_offset: 0.5, loss_deform_align: 1, loss_deform_attn_entropy: 0.05}
+  losses: ['vfl', 'boxes', ]
+  alpha: 0.75
+  gamma: 2.0
+
+  matcher:
+    type: HungarianMatcher
+    weight_dict: {cost_class: 2, cost_bbox: 5, cost_giou: 2}
+    # use_focal_loss: True 
+    alpha: 0.25
+    gamma: 2.0
+
+
+

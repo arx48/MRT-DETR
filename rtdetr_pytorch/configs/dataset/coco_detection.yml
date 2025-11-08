@@ -1,0 +1,36 @@
+task: detection
+
+num_classes: 1
+remap_mscoco_category: True
+
+# 将两个img_folder和ann_file的地址全部替换成数据集存放的地址
+
+train_dataloader: 
+  type: DataLoader
+  dataset: 
+    type: CocoDetection
+    img_folder: ../COCO2017/train2017/
+    ann_file: ../COCO2017/annotations/instances_train2017.json
+    transforms:
+      type: Compose
+      ops: ~
+  shuffle: True
+  batch_size: 8
+  num_workers: 4
+  drop_last: True 
+
+
+val_dataloader:
+  type: DataLoader
+  dataset: 
+    type: CocoDetection
+    img_folder: ../COCO2017/val2017/
+    ann_file: ../COCO2017/annotations/instances_val2017.json
+    transforms:
+      type: Compose
+      ops: ~ 
+
+  shuffle: False
+  batch_size: 8
+  num_workers: 4
+  drop_last: False

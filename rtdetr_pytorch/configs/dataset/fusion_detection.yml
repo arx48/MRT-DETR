@@ -1,0 +1,38 @@
+task: detection
+
+num_classes: 80
+remap_mscoco_category: True
+
+# 将两个img_folder和ann_file的地址全部替换成数据集存放的地址
+
+train_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoFusionDetection
+    img_folder: /data/arx/M3FD/train_RGB
+    img_ir_folder: /data/arx/M3FD/train_thermal
+    ann_file: /data/arx/M3FD/annotations/train.json
+    transforms:
+      type: DualCompose
+      ops: ~
+  shuffle: True
+  batch_size: 8
+  num_workers: 4
+  drop_last: True
+
+
+val_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoFusionDetection
+    img_folder: /data/arx/M3FD/val_RGB
+    img_ir_folder: /data/arx/M3FD/val_thermal
+    ann_file: /data/arx/M3FD/annotations/val.json
+    transforms:
+      type: DualCompose
+      ops: ~
+
+  shuffle: False
+  batch_size: 8
+  num_workers: 4
+  drop_last: False
