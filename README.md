@@ -16,14 +16,14 @@
 ## Datasets
  - Please ensure the dataset is downloaded and placed under your specified data path, such as /data/M3FD/.
  - The data structure should be as follows:
-/data/M3FD/
-├── annotations/
-│   ├── train.json  # Training set annotations
-│   └── val.json    # Validation set annotations
-├── train_RGB/      # Training set Visible Light Images (RGB)
-├── train_thermal/  # Training set Thermal Images (IR)
-├── val_RGB/        # Validation set Visible Light Images (RGB)
-└── val_thermal/    # Validation set Thermal Images (IR)
+ - /data/M3FD/
+ - ├── annotations/
+ - │   ├── train.json  # Training set annotations
+ - │   └── val.json    # Validation set annotations
+ - ├── train_RGB/      # Training set Visible Light Images (RGB)
+ - ├── train_thermal/  # Training set Thermal Images (IR)
+ - ├── val_RGB/        # Validation set Visible Light Images (RGB)
+ - └── val_thermal/    # Validation set Thermal Images (IR)
 
 ## Train
   ```
